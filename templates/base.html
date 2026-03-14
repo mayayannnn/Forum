@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}掲示板{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><a href="{{ url_for('index') }}">掲示板</a></h1>
+            <nav>
+                <a href="{{ url_for('index') }}">ホーム</a>
+                <a href="{{ url_for('new_thread') }}">新規スレッド作成</a>
+            </nav>
+        </header>
+        
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+        
+        <footer>
+            <p>β-1 掲示板サイト</p>
+        </footer>
+    </div>
+</body>
+</html>

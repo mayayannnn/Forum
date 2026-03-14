@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}{{ thread.title }} - 掲示板{% endblock %}
+
+{% block content %}
+<div class="thread-detail">
+    <div class="thread-header">
+        <h2>{{ thread.title }}</h2>
+        <p class="thread-info">
+            投稿数: {{ thread.post_count }} | 
+            作成日時: {{ thread.created_at.strftime('%Y/%m/%d %H:%M') }}
+        </p>
+    </div>
+    
+    <div class="posts">
+        <h3>投稿一覧</h3>
+        {% if posts %}
+        {% for post in posts %}
+        <div class="post">
+            <div class="post-header">
+                <span class="post-name">{{ post.name }}</span>
+                <span class="post-date">{{ post.created_at.strftime('%Y/%m/%d %H:%M') }}</span>
+            </div>
+            <div class="post-content">
+                {{ post.content|replace('\n', '<br>')|safe }}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="empty-state">まだ投稿がありません。</p>
+        {% endif %}
+    </div>
+    
+    <div class="post-form-section" id="post-form-section">
+        <h3>投稿する</h3>
+        <form method="POST" action="{{ url_for('add_post', thread_id=thread.id) }}" class="post-form">
+            <div class="form-group">
+                <label for="name">名前:</label>
+                <input type="text" id="name" name="name" required maxlength="100">
+            </div>
+            <div class="form-group">
+                <label for="content">本文:</label>
+                <textarea id="content" name="content" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">投稿</button>
+        </form>
+    </div>
+</div>
+
+<!-- 固定投稿ボタン -->
+<button class="floating-post-button" onclick="scrollToPostForm()">投稿</button>
+
+<script>
+function scrollToPostForm() {
+    const postFormSection = document.getElementById('post-form-section');
+    if (postFormSection) {
+        postFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // 少し余裕を持たせるため、少し上にスクロール
+        setTimeout(() => {
+            window.scrollBy(0, -20);
+        }, 500);
+    }
+}
+
+// 投稿フォームが画面に表示されたら固定ボタンを隠す
+document.addEventListener('DOMContentLoaded', function() {
+    const postFormSection = document.getElementById('post-form-section');
+    const floatingButton = document.querySelector('.floating-post-button');
+    
+    if (postFormSection && floatingButton) {
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    // 投稿フォームが表示されている場合はボタンを隠す
+                    floatingButton.style.opacity = '0';
+                    floatingButton.style.pointerEvents = 'none';
+                } else {
+                    // 投稿フォームが表示されていない場合はボタンを表示
+                    floatingButton.style.opacity = '1';
+                    floatingButton.style.pointerEvents = 'auto';
+                }
+            });
+        }, {
+            threshold: 0.1 // フォームの10%が表示されたら発火
+        });
+        
+        observer.observe(postFormSection);
+    }
+});
+</script>
+{% endblock %}

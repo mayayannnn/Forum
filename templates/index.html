@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}掲示板一覧 - 掲示板{% endblock %}
+
+{% block content %}
+<div class="thread-list">
+    <h2>スレッド一覧</h2>
+    <p class="info">投稿数が多い順に表示されています</p>
+    
+    {% if threads %}
+    <table class="thread-table">
+        <thead>
+            <tr>
+                <th>タイトル</th>
+                <th>投稿数</th>
+                <th>作成日時</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for thread in threads %}
+            <tr>
+                <td class="title-cell">
+                    <a href="{{ url_for('thread_detail', thread_id=thread.id) }}">
+                        {{ thread.title }}
+                    </a>
+                </td>
+                <td class="count-cell">{{ thread.post_count }}</td>
+                <td class="date-cell">{{ thread.created_at.strftime('%Y/%m/%d %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <p>まだスレッドがありません。</p>
+        <a href="{{ url_for('new_thread') }}" class="btn btn-primary">最初のスレッドを作成</a>
+    </div>
+    {% endif %}
+    
+    <div class="actions">
+        <a href="{{ url_for('new_thread') }}" class="btn btn-primary">新規スレッド作成</a>
+    </div>
+</div>
+{% endblock %}
